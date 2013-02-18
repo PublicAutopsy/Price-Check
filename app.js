@@ -8,6 +8,11 @@ app.set('view engine', 'mustache');
 app.set('views', __dirname + "/views");
 
 
+
+app.get("/",function(req, res){
+  res.send("All");
+});
+
 app.get("/:market?", function(req, res){
 	console.log("Got request");
 	if (req.url === '/favicon.ico') {
@@ -15,6 +20,7 @@ app.get("/:market?", function(req, res){
     	res.end();
     	return;
   	}
+
   	restler.get("http://bitcoincharts.com/t/weighted_prices.json").on('complete', function(bitcoin){
   		console.log("recieved data");
 
@@ -25,7 +31,7 @@ app.get("/:market?", function(req, res){
   			res.send(market_data);
   		} else if (market_data[market] == "undefined"){
   			console.log("not valid");
-  		} else {
+  		} else if (market_data[market] !== "undefined") {
   			var market = req.params.market.toUpperCase();
 
   			var week_data = market_data[market]["7d"];
@@ -43,8 +49,10 @@ app.get("/:market?", function(req, res){
   		}
   		
   	});
-  	res.send
 });
+
+
+
 
 var port = process.env.PORT || 5124;
 app.listen(port, function() {
